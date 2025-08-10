@@ -68,7 +68,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
       padding: 24px;
     }
-    .section + .section { margin-top: 28px; }
+    .section + .section { margin-top: 0; }
     .section-header {
       display: flex;
       align-items: center;
@@ -134,63 +134,108 @@
       box-shadow: 0 10px 30px rgba(0,0,0,.15);
       padding: 20px;
     }
+
+    .section.collapsible .section-header { cursor: pointer; user-select: none; }
+    .section.collapsible .section-content { transition: max-height .25s ease; }
+    .section.collapsed .section-content { display: none; }
+    .section-header::after {
+      content: '▾';
+      margin-left: auto;
+      opacity: .8;
+      transition: transform .2s ease;
+    }
+    .section.collapsed .section-header::after { transform: rotate(-90deg); }
+
+
+    .section-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .section-title { flex: none; }
+
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 8px !important;
+        margin-bottom: 10px !important;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        min-height: 28px;
+    }
+    .section-title { flex: none; line-height: 1.2; }
+
+
+    .section.collapsed .section-content {
+        display: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* --- Alignment fix for equal collapsed heights --- */
+    .section.collapsible { --collapsed-min: 96px; }
+    .section.collapsible .section-header { min-height: 32px !important; }
+    .section.collapsible .section-content { margin: 0 !important; padding: 0 !important; }
+    .section.collapsible.collapsed .section-content { display: none !important; }
+    .section.collapsible.collapsed { min-height: var(--collapsed-min) !important; }
+
+
+    /* Grid alignment fix: rely on grid gap, not adjacent margin */
+    .card .section { margin: 0 !important; }
+    .section + .section { margin-top: 0 !important; }
+
 </style>
 </head>
 <body>
 <header>
 <h1 class="title">Nick Drum Challenges</h1>
-<div class="subtitle">Updated for a cleaner, modern look — menus &amp; links preserved.</div>
 </header>
 <main>
 <div class="card">
-<section class="section">
+<section class="section collapsible collapsed">
 <div class="section-header">
-<span class="section-title">Challenges</span>
-<svg aria-hidden="true" class="yt-icon" focusable="false" height="22" role="img" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
-<path d="M23.5 6.2c-.3-1.2-1.3-2-2.5-2.1C18.7 3.8 15 3.8 12 3.8s-6.7 0-9 .3C1.8 4.2.8 5 .5 6.2 0 8.5 0 12 0 12s0 3.5.5 5.8c.3 1.2 1.3 2 2.5 2.1 2.3.3 6 .3 9 .3s6.7 0 9-.3c1.2-.1 2.2-.9 2.5-2.1.5-2.3.5-5.8.5-5.8s0-3.5-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"></path>
-</svg>
+<span class="section-title">Basic Practices</span>
+
 </div>
-<ul>
-<li><a href="https://www.youtube.com/watch?v=QRormdoYI9w" target="_blank">Challenge 1 - Speed Up</a></li>
-<li><a href="https://www.youtube.com/watch?v=KhZDVeEYV-s" target="_blank">Challenge 2 - Tuplets</a></li>
-</ul>
+<div class="section-content"><ul>
+<li><a href="https://www.youtube.com/watch?v=QRormdoYI9w" target="_blank">Speed Up</a></li>
+<li><a href="https://www.youtube.com/watch?v=KhZDVeEYV-s" target="_blank">Tuplets</a></li>
+</ul></div>
 </section>
-<section class="section">
+<section class="section collapsible collapsed">
 <div class="section-header">
 <span class="section-title">Sight Reading Exercises</span>
 </div>
-<ul>
+<div class="section-content"><ul>
 <li><a href="https://www.youtube.com/watch?v=TkU7jXEjfOE" target="_blank">Exercise 0</a></li>
 <li><a href="https://www.youtube.com/watch?v=p9qynMmBz30" target="_blank">Exercise 1</a></li>
 <li><a href="https://www.youtube.com/watch?v=lh0n4dawOyw" target="_blank">Exercise 2 (Triplets)</a></li>
-</ul>
+</ul></div>
 </section>
-<section class="section">
+<section class="section collapsible collapsed">
 <div class="section-header">
 <span class="section-title">Accents</span>
 </div>
-<ul>
+<div class="section-content"><ul>
 <li><a href="https://youtu.be/b1lY9wjiTtc" target="_blank">Accents 1</a></li>
-</ul>
+</ul></div>
 </section>
-<section class="section">
+<section class="section collapsible collapsed">
 <div class="section-header">
 <span class="section-title">Drum Beats</span>
 </div>
-<ul>
+<div class="section-content"><ul>
 <li><a href="https://youtu.be/Hg6yG7xVTSw" target="_blank">4 Beat</a></li>
 <li><a href="https://youtu.be/01-RG8WDhCQ" target="_blank">8 Beat</a></li>
-</ul>
+</ul></div>
 </section>
 
 <!-- 새로 추가: Beat Player -->
-<section class="section">
+<section class="section collapsible collapsed">
 <div class="section-header">
 <span class="section-title">Beat Player</span>
 </div>
-<ul>
+<div class="section-content"><ul>
 <li><a href="https://nickdrumset.github.io/8beat_mixer/" target="_blank">8 Beat</a></li>
-</ul>
+</ul></div>
 </section>
 
 </div>
@@ -198,5 +243,17 @@
 <footer>
     © 2025 Nick Drum Challenges. All rights reserved <span class="badge">v2</span>
 </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.section.collapsible').forEach(sec => {
+    const header = sec.querySelector('.section-header');
+    if (!header) return;
+    header.addEventListener('click', () => {
+      sec.classList.toggle('collapsed');
+    });
+  });
+});
+</script>
 </body>
 </html>
