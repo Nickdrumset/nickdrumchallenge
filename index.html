@@ -146,22 +146,8 @@
     }
     .section.collapsed .section-header::after { transform: rotate(-90deg); }
 
-
-    .section-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,.08); }
-    .section-title { flex: none; }
-
-
-    .section-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 8px !important;
-        margin-bottom: 10px !important;
-        border-bottom: 1px solid rgba(255,255,255,.08);
-        min-height: 28px;
-    }
+    .section-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px !important; margin-bottom: 10px !important; border-bottom: 1px solid rgba(255,255,255,.08); min-height: 28px; }
     .section-title { flex: none; line-height: 1.2; }
-
 
     .section.collapsed .section-content {
         display: none !important;
@@ -169,14 +155,12 @@
         padding: 0 !important;
     }
 
-
     /* --- Alignment fix for equal collapsed heights --- */
     .section.collapsible { --collapsed-min: 96px; }
     .section.collapsible .section-header { min-height: 32px !important; }
     .section.collapsible .section-content { margin: 0 !important; padding: 0 !important; }
     .section.collapsible.collapsed .section-content { display: none !important; }
     .section.collapsible.collapsed { min-height: var(--collapsed-min) !important; }
-
 
     /* Grid alignment fix: rely on grid gap, not adjacent margin */
     .card .section { margin: 0 !important; }
@@ -193,7 +177,6 @@
 <section class="section collapsible collapsed">
 <div class="section-header">
 <span class="section-title">Basic Practices</span>
-
 </div>
 <div class="section-content"><ul>
 <li><a href="https://www.youtube.com/watch?v=QRormdoYI9w" target="_blank">Speed Up</a></li>
@@ -228,13 +211,15 @@
 </ul></div>
 </section>
 
-<!-- 새로 추가: Beat Player -->
+<!-- 수정: Beat Maker -->
 <section class="section collapsible collapsed">
 <div class="section-header">
-<span class="section-title">Beat Player</span>
+<span class="section-title">Beat Maker</span>
 </div>
 <div class="section-content"><ul>
+<li><a href="https://nickdrumset.github.io/4beat_mixer/" target="_blank">4 Beat</a></li>
 <li><a href="https://nickdrumset.github.io/8beat_mixer/" target="_blank">8 Beat</a></li>
+<li><a href="https://nickdrumset.github.io/16beat_mixer/" target="_blank">16 Beat</a></li>
 </ul></div>
 </section>
 
