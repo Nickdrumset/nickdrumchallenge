@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,11 +51,6 @@
       background-clip: text;
       color: transparent;
     }
-    .subtitle {
-      margin-top: 10px;
-      color: var(--sub);
-      font-size: 14px;
-    }
     main {
       max-width: 980px;
       margin: 24px auto 56px;
@@ -67,61 +63,6 @@
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
       padding: 24px;
-    }
-    .section + .section { margin-top: 0; }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      margin-bottom: 10px;
-    }
-    .section-title {
-      font-weight: 700;
-      font-size: 20px;
-    }
-    .yt-icon path { fill: #ff3d00; }
-    ul, ol { margin: 0; padding: 0; list-style: none; }
-    li { margin: 8px 0; }
-    a {
-      min-height: 48px; display: flex; align-items: center;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: #dbe2ff;
-      background: linear-gradient(135deg, rgba(255,235,150,.18), rgba(106,17,203,.14) 40%, rgba(37,117,252,.12));
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(106,17,203,.28);
-      transition: transform .15s ease, box-shadow .2s ease, background .25s ease;
-      will-change: transform;
-    }
-    a:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px var(--ring);
-      background: linear-gradient(135deg, rgba(106,17,203,.22), rgba(37,117,252,.18));
-      border-color: rgba(106,17,203,.42);
-    }
-    footer {
-      text-align: center;
-      color: var(--sub);
-      font-size: 13px;
-      padding: 28px 16px 48px;
-    }
-    .badge {
-      display:inline-block;
-      font-size: 11px;
-      padding: 2px 8px;
-      margin-left: 4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: #c7cffc;
-      border: 1px solid rgba(255,255,255,.12);
-    }
-  
-    .card {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
@@ -133,100 +74,149 @@
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,.15);
       padding: 20px;
+      margin: 0 !important;
     }
-
-    .section.collapsible .section-header { cursor: pointer; user-select: none; }
-    .section.collapsible .section-content { transition: max-height .25s ease; }
-    .section.collapsed .section-content { display: none; }
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 10px; margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      cursor: pointer; user-select: none;
+      position: relative;
+      min-height: 32px;
+    }
     .section-header::after {
       content: '▾';
-      margin-left: auto;
-      opacity: .8;
+      margin-left: auto; opacity: .8;
       transition: transform .2s ease;
     }
     .section.collapsed .section-header::after { transform: rotate(-90deg); }
-
-    .section-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px !important; margin-bottom: 10px !important; border-bottom: 1px solid rgba(255,255,255,.08); min-height: 28px; }
-    .section-title { flex: none; line-height: 1.2; }
-
-    .section.collapsed .section-content {
-        display: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
+    .section-title { font-weight: 700; font-size: 20px; line-height: 1.2; }
+    .section-content { transition: max-height .25s ease; }
+    .section.collapsed .section-content { display: none !important; }
+    ul, ol { margin: 0; padding: 0; list-style: none; }
+    li { margin: 8px 0; }
+    a {
+      min-height: 48px; display: inline-flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #dbe2ff;
+      background: linear-gradient(135deg, rgba(255,235,150,.18), rgba(106,17,203,.14) 40%, rgba(37,117,252,.12));
+      padding: 10px 14px; border-radius: 12px;
+      border: 1px solid rgba(106,17,203,.28);
+      transition: transform .15s ease, box-shadow .2s ease, background .25s ease;
+      will-change: transform;
     }
-
-    /* --- Alignment fix for equal collapsed heights --- */
-    .section.collapsible { --collapsed-min: 96px; }
-    .section.collapsible .section-header { min-height: 32px !important; }
-    .section.collapsible .section-content { margin: 0 !important; padding: 0 !important; }
-    .section.collapsible.collapsed .section-content { display: none !important; }
-    .section.collapsible.collapsed { min-height: var(--collapsed-min) !important; }
-
-    /* Grid alignment fix: rely on grid gap, not adjacent margin */
-    .card .section { margin: 0 !important; }
-    .section + .section { margin-top: 0 !important; }
-
+    a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px var(--ring);
+      background: linear-gradient(135deg, rgba(106,17,203,.22), rgba(37,117,252,.18));
+      border-color: rgba(106,17,203,.42);
+    }
+    /* Make header link look plain (no button look) */
+    .section-title a.plain {
+      color: inherit;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      display: inline;
+      min-height: 0;
+    }
+    .section-title a.plain:hover {
+      transform: none;
+      box-shadow: none;
+      background: none;
+      border: none;
+    }
+    /* Remove arrow and pointer for sections with no-arrow class */
+    .section-header.no-arrow {
+      cursor: default;
+    }
+    .section-header.no-arrow::after {
+      content: none;
+    }
+    .group-title {
+      display: inline-block; font-size: 13px; color: var(--sub);
+      margin: 12px 0 6px; padding: 2px 8px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.05);
+    }
+    .nested { margin-left: 12px; }
+    footer {
+      text-align: center; color: #b3b9d8; font-size: 13px;
+      padding: 28px 16px 48px;
+    }
+    .badge {
+      display:inline-block; font-size: 11px; padding: 2px 8px; margin-left: 4px;
+      border-radius: 999px; background: rgba(255,255,255,.08);
+      color: #c7cffc; border: 1px solid rgba(255,255,255,.12);
+    }
 </style>
 </head>
 <body>
 <header>
-<h1 class="title">Nick Drum Challenges</h1>
+  <h1 class="title">Nick Drum Challenges</h1>
 </header>
+
 <main>
-<div class="card">
-<section class="section collapsible collapsed">
-<div class="section-header">
-<span class="section-title">Basic Practices</span>
-</div>
-<div class="section-content"><ul>
-<li><a href="https://www.youtube.com/watch?v=QRormdoYI9w" target="_blank">Speed Up</a></li>
-<li><a href="https://www.youtube.com/watch?v=KhZDVeEYV-s" target="_blank">Tuplets</a></li>
-</ul></div>
-</section>
-<section class="section collapsible collapsed">
-<div class="section-header">
-<span class="section-title">Sight Reading Exercises</span>
-</div>
-<div class="section-content"><ul>
-<li><a href="https://www.youtube.com/watch?v=TkU7jXEjfOE" target="_blank">Exercise 0</a></li>
-<li><a href="https://www.youtube.com/watch?v=p9qynMmBz30" target="_blank">Exercise 1</a></li>
-<li><a href="https://www.youtube.com/watch?v=lh0n4dawOyw" target="_blank">Exercise 2 (Triplets)</a></li>
-</ul></div>
-</section>
-<section class="section collapsible collapsed">
-<div class="section-header">
-<span class="section-title">Accents</span>
-</div>
-<div class="section-content"><ul>
-<li><a href="https://youtu.be/b1lY9wjiTtc" target="_blank">Accents 1</a></li>
-</ul></div>
-</section>
-<section class="section collapsible collapsed">
-<div class="section-header">
-<span class="section-title">Drum Beats</span>
-</div>
-<div class="section-content"><ul>
-<li><a href="https://youtu.be/Hg6yG7xVTSw" target="_blank">4 Beat</a></li>
-<li><a href="https://youtu.be/01-RG8WDhCQ" target="_blank">8 Beat</a></li>
-</ul></div>
-</section>
+  <div class="card">
 
-<!-- 수정: Beat Maker -->
-<section class="section collapsible collapsed">
-<div class="section-header">
-<span class="section-title">Beat Maker</span>
-</div>
-<div class="section-content"><ul>
-<li><a href="https://nickdrumset.github.io/4beat_mixer/" target="_blank">4 Beat</a></li>
-<li><a href="https://nickdrumset.github.io/8beat_mixer/" target="_blank">8 Beat</a></li>
-<li><a href="https://nickdrumset.github.io/16beat_mixer/" target="_blank">16 Beat</a></li>
-</ul></div>
-</section>
+    <!-- Basic Practices -->
+    <section class="section collapsible collapsed">
+      <div class="section-header">
+        <span class="section-title">Basic Practices</span>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><a href="https://www.youtube.com/watch?v=QRormdoYI9w" target="_blank">Speed Up</a></li>
+          <li><a href="https://www.youtube.com/watch?v=KhZDVeEYV-s" target="_blank">Tuplets</a></li>
+          <div class="group-title">Accents</div>
+          <ul class="nested">
+            <li><a href="https://youtu.be/b1lY9wjiTtc" target="_blank">Accents 1</a></li>
+          </ul>
+          <div class="group-title">Drum Beats</div>
+          <ul class="nested">
+            <li><a href="https://youtu.be/Hg6yG7xVTSw" target="_blank">4 Beat</a></li>
+            <li><a href="https://youtu.be/01-RG8WDhCQ" target="_blank">8 Beat</a></li>
+          </ul>
+        </ul>
+      </div>
+    </section>
 
+    <!-- Sight Reading: direct link, no arrow, plain header -->
+    <section class="section">
+      <div class="section-header no-arrow">
+        <span class="section-title">
+          <a class="plain" href="https://nickdrumset.github.io/Sight_Reading_Exercise/" target="_blank">
+            Sight Reading Exercise
+          </a>
+        </span>
+      </div>
+    </section>
+
+    <!-- Beat Maker -->
+    <section class="section collapsible collapsed">
+      <div class="section-header">
+        <span class="section-title">Beat Maker</span>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><a href="https://nickdrumset.github.io/Beat_Maker/" target="_blank">4/8/16 Beat Maker</a></li>
+        </ul>
+      </div>
+    </section>
+    <!-- Rhythm Ear Training: direct link, no arrow, plain header -->
+    <section class="section">
+      <div class="section-header no-arrow">
+        <span class="section-title">
+          <a class="plain" href="https://nickdrumset.github.io/Rhythm_Ear_Training/" target="_blank">
+            Rhythm Ear Training
+          </a>
+        </span>
+      </div>
+    </section>
 </div>
 </main>
+
 <footer>
-    © 2025 Nick Drum Challenges. All rights reserved <span class="badge">v2</span>
+  © 2025 Nick Drum Challenges. All rights reserved <span class="badge">v3.1</span>
 </footer>
 
 <script>
