@@ -40,21 +40,26 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-x: hidden; /* 안전 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 중앙 */
+    align-items: center;     /* 수평 중앙 */
+    min-height: 100vh;       /* 화면 전체 높이 사용 */
   }
 
-  /* === 가로모드 1.5배 확대용 래퍼 === */
-  #scaleWrap { transform-origin: top center; }
-  @media (orientation: landscape) {
-    /* 전체를 1.5배 확대하면서 뷰포트에 맞게 폭 보정 */
-    #scaleWrap {
-      transform: scale(1.5);
-      width: calc(100% / 1.5);
-      margin: 0 auto;
-    }
+  /* === 가로/세로 공통: 확대 적용 === */
+  #scaleWrap {
+    transform: scale(1.5);
+    transform-origin: center center;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   header {
-    padding: clamp(36px, 6vw, 64px) 20px clamp(20px, 4vw, 40px);
+    padding: clamp(12px, 3vw, 28px) 20px clamp(12px, 3vw, 24px);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -75,8 +80,8 @@
   }
 
   main {
-    max-width: min(1320px, 96vw);
-    margin: clamp(12px, 3vw, 28px) auto clamp(36px, 6vw, 56px);
+    max-width: min(1755px, 98vw); /* 50% wider than 1170px */
+    margin: clamp(8px, 2vw, 16px) auto clamp(16px, 3vw, 28px); /* reduce top/bottom whitespace */
     padding: 0 clamp(8px, 2vw, 16px);
     position: relative;
   }
@@ -89,7 +94,7 @@
     box-shadow: 0 12px 28px rgba(100,150,200,.22);
     padding: clamp(18px, 2.8vw, 32px);
     display: grid;
-    grid-template-columns: repeat(2, var(--col-width));
+    grid-template-columns: 1fr;
     gap: var(--gap);
     align-items: start;
   }
@@ -198,7 +203,7 @@
   /* --- Responsive rules --- */
   @media (max-width: 1200px) {
     :root { --col-width: minmax(460px, 1fr); }
-    main { max-width: min(1180px, 96vw); }
+    main { max-width: min(1755px, 98vw); }
   }
   @media (max-width: 980px) {
     :root { --col-width: minmax(380px, 1fr); }
@@ -303,9 +308,6 @@
     </div>
   </main>
 
-  <footer>
-    © 2025 Nick Drum Challenge. All rights reserved <span class="badge">v3.1</span>
-  </footer>
 </div>
 <button id="fsBtn" class="fs-btn" aria-label="전체화면 전환 (F)" title="전체화면 전환 (F)" aria-pressed="false">
   <!-- Enter fullscreen icon -->
