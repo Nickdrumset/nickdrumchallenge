@@ -30,6 +30,8 @@
   }
 
   * { box-sizing: border-box; }
+  /* Prevent text auto-zoom on GitHub Pages and mobile Safari */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   html, body { height: 100%; }
   body {
     margin: 0;
@@ -49,7 +51,7 @@
 
   /* === 가로/세로 공통: 확대 적용 === */
   #scaleWrap {
-    transform: scale(1.2);
+    transform: scale(1.5);
     transform-origin: top center; /* 상단을 기준으로 스케일 → 타이틀이 화면 밖으로 밀려나지 않음 */
     width: 100%;
     margin: 0 auto;
