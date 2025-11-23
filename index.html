@@ -1,112 +1,396 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Nick Drum Challenge V3</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nick Drum Challenge</title>
+<style>
+  :root {
+    --bg: #edf2f5;
+    --bg-grad: linear-gradient(135deg, #bfeee3 0%, #ffd8ba 50%, #bcd9f5 100%);
+    --card: rgba(255,255,255,0.65);
+    --text: #1c2c38;
+    --sub: #385858;
+
+    /* Fluid scale tokens */
+    --fs-title: clamp(30px, 4vw, 70px);
+    --fs-section-title: clamp(18px, 2.2vw, 30px);
+    --fs-link: clamp(14px, 1.6vw, 18px);
+    --fs-group: clamp(11px, 1.2vw, 13px);
+
+    --pad-section: clamp(16px, 2.2vw, 30px);
+    --pad-link-y: clamp(8.5px, 1.5vw, 22px);
+    --pad-link-x: clamp(13.5px, 2.2vw, 30px);
+
+    --gap: clamp(16px, 2.6vw, 28px);
+    --radius: clamp(12px, 1.6vw, 16px);
+
+    /* Landscape: two wide columns */
+    --col-width: minmax(520px, 1fr);
+  }
+
+  * { box-sizing: border-box; }
+  /* Prevent text auto-zoom on GitHub Pages and mobile Safari */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji', 'Segoe UI Symbol';
+    color: var(--text);
+    background: var(--bg-grad) fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden; /* 안전 */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 세로 상단 정렬 */
+    align-items: center;         /* 가로 중앙 정렬 */
+    min-height: 100vh;       /* 화면 전체 높이 사용 */
+  }
+
+  /* === 가로/세로 공통: 확대 적용 === */
+  #scaleWrap {
+    transform: scale(1.5);
+    transform-origin: top center; /* 상단을 기준으로 스케일 → 타이틀이 화면 밖으로 밀려나지 않음 */
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    padding: clamp(12px, 3vw, 28px) 20px clamp(12px, 3vw, 24px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  header::after { content: none; display: none; }
+
+  .title {
+    font-size: var(--fs-title);
+    margin: 0;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ffffff, #cfeae1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px black;
+  }
+
+  main {
+    max-width: min(1755px, 98vw); /* 50% wider than 1170px */
+    margin: clamp(8px, 2vw, 16px) auto clamp(16px, 3vw, 28px); /* reduce top/bottom whitespace */
+    padding: 0 clamp(8px, 2vw, 16px);
+    position: relative;
+  }
+
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border: 0;
+    border-radius: var(--radius);
+    box-shadow: 0 12px 28px rgba(100,150,200,.22);
+    padding: clamp(18px, 2.8vw, 32px);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap);
+    align-items: start;
+  }
+
+  .section {
+    background: rgba(245,248,250,.85);
+    border: 0;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 18px rgba(100,150,200,.18);
+    padding: var(--pad-section);
+    margin: 0 !important;
+    align-self: start;
+  }
+
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: clamp(6px, 1vw, 10px);
+    margin-bottom: clamp(6px, 1vw, 10px);
+    border-bottom: 1px solid rgba(100,150,200,.22);
+    cursor: pointer; user-select: none;
+    position: relative;
+    min-height: 32px;
+  }
+  .section-header::after {
+    content: '▾';
+    margin-left: auto; opacity: .7;
+    transition: transform .2s ease;
+  }
+  .section.collapsed .section-header::after { transform: rotate(-90deg); }
+
+  .section-title { font-weight: 700; font-size: var(--fs-section-title); line-height: 1.2; }
+  .section-content { transition: max-height .25s ease; }
+  .section.collapsed .section-content { display: none !important; }
+
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  li { margin: clamp(6px, 1.2vw, 10px) 0; }
+
+  /* Outlined link buttons */
+  a {
+    min-height: clamp(42px, 5.6vw, 52px);
+    display: inline-flex; align-items: center; gap: clamp(6px, 1vw, 10px);
+    text-decoration: none; color: var(--text);
+    background: none;
+    padding: var(--pad-link-y) var(--pad-link-x);
+    border-radius: clamp(10px, 1.5vw, 12px);
+    border: 1px solid rgba(100,150,200,0.25);
+    font-size: var(--fs-link);
+    transition: transform .15s ease, box-shadow .2s ease, background .25s ease, border-color .2s ease;
+    will-change: transform;
+  }
+  a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100,150,200,0.15);
+    background: rgba(200,230,250,0.15);
+    border-color: rgba(100,150,200,0.35);
+  }
+
+  .section-header.no-arrow { cursor: default; }
+  .section-header.no-arrow::after { content: none; }
+
+  .section-title a.plain {
+    color: inherit;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    display: inline;
+    min-height: 0;
+    font-size: var(--fs-section-title);
+  }
+  .section-title a.plain:hover {
+    transform: none;
+    box-shadow: none;
+    background: none;
+    border: none;
+  }
+
+  .group-title {
+    display: inline-block; font-size: var(--fs-group); color: var(--sub);
+    margin: clamp(8px, 1.6vw, 12px) 0 clamp(4px, 1vw, 6px);
+    padding: 2px clamp(6px, 1vw, 8px);
+    border-radius: 8px;
+    border: 1px solid rgba(100,150,200,.18); background: rgba(200,230,250,.32);
+  }
+  .nested { margin-left: clamp(8px, 1.4vw, 12px); }
+  /* Indent for specific items in Basic Practices */
+  #basic-practices .section-content li.indent { margin-left: clamp(10px, 1.2vw, 16px); }
+
+  footer {
+    text-align: center; color: var(--sub); font-size: clamp(11px, 1.2vw, 13px);
+    padding: clamp(20px, 4vw, 28px) clamp(12px, 2vw, 16px) clamp(28px, 6vw, 48px);
+  }
+  .badge {
+    display:inline-block; font-size: clamp(10px, 1.1vw, 11px); padding: 2px 8px; margin-left: 4px;
+    border-radius: 999px; background: rgba(200,230,250,.5);
+    color: var(--text);
+  }
+
+  a:focus-visible,
+  .section-header:focus-visible {
+    outline: 2px solid rgba(100,150,200,.6);
+    outline-offset: 3px;
+    border-radius: 12px;
+  }
+
+  /* --- Responsive rules --- */
+  @media (max-width: 1200px) {
+    :root { --col-width: minmax(460px, 1fr); }
+    main { max-width: min(1755px, 98vw); }
+  }
+  @media (max-width: 980px) {
+    :root { --col-width: minmax(380px, 1fr); }
+  }
+  /* Portrait / narrow: single column vertical stacking */
+  @media (max-width: 760px), (orientation: portrait) {
+    .card { grid-template-columns: 1fr; }
+    main { max-width: min(720px, 96vw); }
+  }
+
+  /* --- Fullscreen button --- */
+  .fs-btn {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 9999px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    z-index: 1000;
+  }
+  .fs-btn:hover { background: rgba(0,0,0,0.75); transform: translateY(-1px); }
+  .fs-btn:active { transform: translateY(0); }
+  .fs-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(255,255,255,0.5); }
+  .icon { width: 22px; height: 22px; display: inline; }
+  .icon.exit { display: none; }
+</style>
 </head>
 <body>
+<div id="scaleWrap">
+  <header>
+    <h1 class="title">Nick Drum Challenge</h1>
+  </header>
 
-    <div id="scaleWrap">
-        
-        <div id="menu-view">
-            <header>
-                <h1 class="main-title">Nick Drum Challenge</h1>
-            </header>
+  <main>
+    <div class="card">
 
-            <main>
-                <div class="card menu-card">
-                    
-                    <section class="section collapsible" id="basic-practices">
-                        <div class="section-header">
-                            <span class="section-title">Basic Practices</span>
-                            <span class="toggle-icon">▾</span>
-                        </div>
-                        <div class="section-content">
-                            <ul>
-                                <li class="indent">
-                                    <button class="nav-btn" data-module="speedup">Speed Up</button>
-                                </li>
-                                <li class="indent">
-                                    <button class="nav-btn" data-module="tuplets">Tuplets</button>
-                                </li>
-                                <ul class="nested">
-                                    <li>
-                                        <button class="nav-btn" data-module="accents">Accents</button>
-                                    </li>
-                                </ul>
-                            </ul>
-                        </div>
-                    </section>
-
-                    <section class="section">
-                        <div class="section-header no-arrow">
-                            <button class="nav-btn plain" data-module="sightreading">
-                                Sight Reading Exercise
-                            </button>
-                        </div>
-                    </section>
-
-                    <section class="section">
-                        <div class="section-header no-arrow">
-                            <button class="nav-btn plain" data-module="beat4816">
-                                4 / 8 / 16 Beat Exercise
-                            </button>
-                        </div>
-                    </section>
-
-                    <section class="section">
-                        <div class="section-header no-arrow">
-                            <button class="nav-btn plain" data-module="rhythmear">
-                                Rhythm Ear Training
-                            </button>
-                        </div>
-                    </section>
-
-                </div>
-            </main>
-            
-            <footer>
-                <div class="footer-text">Nick Drum Challenge V3.0</div>
-            </footer>
+      <!-- Basic Practices (collapsible) -->
+      <section class="section collapsible collapsed" id="basic-practices">
+        <div class="section-header">
+          <span class="section-title">Basic Practices</span>
         </div>
-
-        <div id="game-view" class="hidden">
-            <header class="game-header">
-                <button id="btn-back" class="icon-btn" aria-label="메뉴로 돌아가기">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 12H5M12 19l-7-7 7-7"/>
-                    </svg>
-                </button>
-                <h2 id="game-title">Exercise Title</h2>
-            </header>
-            
-            <div id="game-container"></div>
+        <div class="section-content">
+          <ul>
+            <li class="indent"><a href="https://nickdrumset.github.io/Speed-Up-Challenge/" target="_blank" rel="noopener">Speed Up</a></li>
+            <li class="indent"><a href="https://nickdrumset.github.io/Tuplets/" target="_blank" rel="noopener">Tuplets</a></li>
+            <ul class="nested">
+              <li><a href="https://nickdrumset.github.io/Accents/" target="_blank" rel="noopener">Accents</a></li>
+            </ul>
+          </ul>
         </div>
+      </section>
+
+      <!-- Sight Reading Exercise (link as title) -->
+      <section class="section">
+        <div class="section-header no-arrow">
+          <span class="section-title">
+            <a class="plain" href="https://nickdrumset.github.io/Sight_Reading_Exercise/" target="_blank" rel="noopener">
+              Sight Reading Exercise
+            </a>
+          </span>
+        </div>
+      </section>
+
+      <!-- 4/8/16 Beat Exercise (link as title) -->
+      <section class="section">
+        <div class="section-header no-arrow">
+          <span class="section-title">
+            <a class="plain" href="https://nickdrumset.github.io/4_8_16_Beat_Exercise/" target="_blank" rel="noopener">
+              4/8/16 Beat Exercise
+            </a>
+          </span>
+        </div>
+      </section>
+
+      <!-- Rhythm Ear Training (link as title) -->
+      <section class="section">
+        <div class="section-header no-arrow">
+          <span class="section-title">
+            <a class="plain" href="https://nickdrumset.github.io/Rhythm_Ear_Training/" target="_blank" rel="noopener">
+              Rhythm Ear Training
+            </a>
+          </span>
+        </div>
+      </section>
 
     </div>
+  </main>
 
-    <button id="fsBtn" class="fs-btn" aria-label="전체화면 전환 (F)">
-        <svg class="icon enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10V4h6m10 10v6h-6M4 4l7 7m9 9l-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <svg class="icon exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4H4v6m10 10h6v-6M11 11L4 4m9 9l7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
+</div>
+<button id="fsBtn" class="fs-btn" aria-label="전체화면 전환 (F)" title="전체화면 전환 (F)" aria-pressed="false">
+  <!-- Enter fullscreen icon -->
+  <svg class="icon enter" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M4 10V4h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20 14v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 4l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M20 20l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <!-- Exit fullscreen icon -->
+  <svg class="icon exit" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M10 4H4v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14 20h6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M11 11L4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M13 13l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</button>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Collapsible sections (accordion) ---
+  const collapsibles = Array.from(document.querySelectorAll('.section.collapsible'));
+  collapsibles.forEach(sec => {
+    const header = sec.querySelector('.section-header');
+    if (!header) return;
+    header.addEventListener('click', () => {
+      collapsibles.forEach(other => {
+        if (other !== sec) other.classList.add('collapsed');
+      });
+      sec.classList.toggle('collapsed');
+    });
+  });
 
-    <script src="js/config.js"></script>
-    <script src="js/audio.js"></script>
-    <script src="js/ui.js"></script>
+  // --- Fullscreen toggle (button + 'f' key) ---
+  const btn = document.getElementById('fsBtn');
+  const enterIcon = btn ? btn.querySelector('.icon.enter') : null;
+  const exitIcon = btn ? btn.querySelector('.icon.exit') : null;
 
-    <script src="js/exercises/speedup.js"></script>
-    <script src="js/exercises/accents.js"></script>
-    <script src="js/exercises/tuplets.js"></script>
-    <script src="js/exercises/sightreading.js"></script>
-    <script src="js/exercises/beat.js"></script>
-    <script src="js/exercises/rhythmear.js"></script>
+  const isFullscreen = () => document.fullscreenElement || document.webkitFullscreenElement;
 
-    <script src="js/main.js"></script>
+  function enterFullscreen(el) {
+    if (el.requestFullscreen) return el.requestFullscreen();
+    if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen(); // Safari
+    return Promise.reject(new Error('Fullscreen API not supported'));
+  }
 
+  function exitFullscreen() {
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen(); // Safari
+    return Promise.reject(new Error('Fullscreen API not supported'));
+  }
+
+  function updateUI() {
+    const fs = !!isFullscreen();
+    if (btn) btn.setAttribute('aria-pressed', fs ? 'true' : 'false');
+    if (enterIcon) enterIcon.style.display = fs ? 'none' : 'inline';
+    if (exitIcon) exitIcon.style.display = fs ? 'inline' : 'none';
+  }
+
+  async function toggleFullscreen() {
+    try {
+      if (isFullscreen()) {
+        await exitFullscreen();
+      } else {
+        // Use the entire page as the target for maximum compatibility
+        await enterFullscreen(document.documentElement);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      updateUI();
+    }
+  }
+
+  if (btn) btn.addEventListener('click', toggleFullscreen);
+
+  // Keyboard: 'f' to toggle, ESC to exit (ignore typing fields & IME composing)
+  document.addEventListener('keydown', (e) => {
+    if (e.isComposing || e.repeat) return;
+    const tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable)) return;
+    if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
+    if ((e.key === 'Escape' || e.key === 'Esc') && isFullscreen()) { exitFullscreen().then(updateUI); }
+  });
+
+  // Keep UI in sync when user exits via ESC or browser UI
+  document.addEventListener('fullscreenchange', updateUI);
+  document.addEventListener('webkitfullscreenchange', updateUI);
+  updateUI();
+});
+</script>
 </body>
 </html>
