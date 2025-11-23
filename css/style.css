@@ -1,0 +1,186 @@
+/* =========================================
+   1. 기본 테마 & 레이아웃 (Base Theme)
+   ========================================= */
+:root {
+    --bg1: #bcd9cc;   --bg2: #ffc49c;   --bg3: #b9d0f3;
+    --card: rgba(255, 255, 255, 0.65);
+    --text: #1c2c38;  --sub-text: #385858;
+    --accent: #088ca3; --warn: #a86c14; --ok: #279854;
+    --border: rgba(100, 150, 200, 0.22);
+    --shadow: 0 12px 28px rgba(100, 150, 200, 0.22);
+    --radius: 16px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background: radial-gradient(1200px 800px at 0% 0%, var(--bg1) 0%, transparent 60%),
+                radial-gradient(1200px 800px at 100% 20%, var(--bg2) 0%, transparent 55%),
+                radial-gradient(1000px 700px at 75% 100%, var(--bg3) 0%, transparent 60%), #f6f8fb;
+    background-attachment: fixed;
+    display: flex; justify-content: center; align-items: center;
+}
+#scaleWrap {
+    width: 100%; max-width: 1800px; min-height: 100vh;
+    transform-origin: top center; transition: transform 0.1s ease-out;
+    padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.hidden { display: none !important; }
+header { width: 100%; text-align: center; margin-bottom: 20px; padding-top: 20px; }
+.main-title { font-size: clamp(32px, 6vw, 64px); font-weight: 800; margin: 0; background: linear-gradient(90deg, #ffffff, #cfeae1); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.card { background: var(--card); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: var(--radius); box-shadow: 0 12px 28px rgba(100,150,200,0.22); padding: 24px; width: 100%; max-width: 600px; margin: 0 auto; }
+.section { margin-bottom: 16px; background: rgba(245, 248, 250, 0.6); border-radius: 12px; padding: 8px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; cursor: pointer; font-weight: 700; color: var(--sub-text); }
+.toggle-icon { transition: transform 0.3s; font-size: 14px; opacity: 0.6; }
+.collapsed .section-content { display: none; } .collapsed .toggle-icon { transform: rotate(-90deg); }
+ul { list-style: none; padding: 0; margin: 0; } li { margin: 4px 0; }
+.nav-btn { width: 100%; text-align: left; background: white; border: 1px solid var(--border); padding: 14px 18px; border-radius: 10px; font-size: 16px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; }
+.nav-btn:hover:not(.plain) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(100,150,200,0.15); background: #f0fbff; border-color: var(--accent); }
+kbd { font-family: monospace; font-size: 12px; color: #999; background: #f4f4f4; padding: 2px 6px; border-radius: 4px; border: 1px solid #ddd; }
+#game-view { width: 100%; height: 100%; display: flex; flex-direction: column; }
+.game-header { display: flex; align-items: center; justify-content: center; position: relative; padding: 0 20px 20px; }
+#btn-back { position: absolute; left: 0; top: 0; background: rgba(255,255,255,0.8); border: 1px solid var(--border); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+#btn-back:hover { background: white; transform: scale(1.1); color: var(--accent); }
+#game-title { font-size: 24px; font-weight: 800; color: var(--sub-text); margin: 0; }
+#game-container { width: 100%; flex: 1; display: flex; justify-content: center; }
+footer { margin-top: 40px; font-size: 12px; color: var(--sub-text); opacity: 0.7; }
+.fs-btn { position: fixed; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; border: none; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.icon.exit { display: none; }
+.input-box { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px; width: 80px; text-align: center; font-size: 16px; font-weight: 700; }
+.btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: white; cursor: pointer; font-weight: 700; transition: all 0.2s; }
+.btn:hover { background: #f0f0f0; }
+.btn.primary { background: #f0fbff; color: var(--accent); border-color: var(--accent); } .btn.primary:hover { background: var(--accent); color: white; }
+.btn.warn { background: #fff6ea; color: var(--warn); border-color: var(--warn); } .btn.warn:hover { background: var(--warn); color: white; }
+.btn.ok { background: #eefaf2; color: var(--ok); border-color: var(--ok); } .btn.ok:hover { background: var(--ok); color: white; }
+.btn.active { background: var(--text); color: white; border-color: var(--text); }
+.label { display: block; font-size: 12px; color: var(--sub-text); margin-bottom: 4px; font-weight: 600; }
+
+
+/* =========================================
+   3. 게임 전용 스타일 (Grid & Layout)
+   ========================================= */
+
+/* [핵심 수정] 기본적으로 모든 게임 레이아웃을 화면에 꽉 차게 설정 (98vw) */
+.game-layout-wrapper {
+    width: 100%;
+    max-width: 98vw; /* [복구] 모든 게임 넓게 사용 */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 컨트롤 패널 */
+.control-grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; }
+.nav-grp { display: flex; gap: 8px; width: 100%; }
+.grp { display: flex; flex-direction: column; }
+.start-grp { width: 100%; }
+.start-grp button { width: 100%; height: 50px; font-size: 18px; }
+
+/* 패턴 뷰 (패널) */
+.pattern-panel {
+    background: rgba(255,255,255,0.4);
+    width: 100%;
+    padding: 10px;
+    max-width: 100% !important;
+    min-height: 750px; /* [유지] 높이 고정 */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.slots-container { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+.bar { display: grid; gap: 16px; width: 100%; }
+.measure { display: flex; width: 100%; gap: 0; }
+
+/* 슬롯 기본 스타일 */
+.slot-img, .slot-empty {
+    width: 100%; height: auto; 
+    aspect-ratio: 1/1; /* 기본 1:1 */
+    background: rgba(255,255,255,0.65); border: 1px solid rgba(100,150,200,0.3); object-fit: contain; border-radius: 0; min-width: 0; cursor: pointer;
+}
+
+/* Beat Exercise 전용 비율 (5:3) */
+/* .mode-beat-study가 붙은 곳 내부의 이미지에 적용 */
+.mode-beat-study .slot-img { aspect-ratio: 5/3; }
+
+/* Beat Maker 전용 비율 (16:9) */
+.mode-beat-maker .slot-img, 
+.mode-beat-maker .slot-empty {
+    aspect-ratio: 16/9;
+    min-height: 150px;
+}
+
+.slot-empty { background: rgba(0,0,0,0.03); border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; color: var(--sub-text); font-weight: 600; font-size: 14px; border-radius: 10px; }
+.slot-empty:hover { background: rgba(0,0,0,0.06); border-color: var(--accent); }
+.measure img:first-child, .measure div:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.measure img:last-child, .measure div:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+.slot-img.playing, .slot-empty.playing { background: #dae3f1; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(14,165,183,0.4) !important; z-index: 10; position: relative; }
+
+
+/* Grid: 모드별 컬럼 */
+.mode-single .bar, 
+.mode-double .bar, 
+.mode-paradiddle .bar, 
+.mode-sightreading .bar { grid-template-columns: repeat(2, 1fr); }
+
+.mode-accents .bar:nth-child(1), 
+.mode-accents .bar:nth-child(2) { grid-template-columns: repeat(2, 1fr); }
+.mode-accents .bar:nth-child(3) { grid-template-columns: repeat(4, 1fr); }
+.mode-accents .bar:nth-child(4) { grid-template-columns: repeat(8, 1fr); }
+
+/* Tuplets (2열 통일) */
+.mode-tuplets .bar { grid-template-columns: repeat(2, 1fr); }
+
+/* [Beat Study] 1-4-4 구조 */
+.mode-beat-study .bar:nth-child(1) { grid-template-columns: 1fr 3fr; } 
+.mode-beat-study .bar { grid-template-columns: repeat(4, 1fr); }
+.mode-beat-study .slot-img { max-width: 300px; } /* 너무 커지지 않게 */
+
+/* [Beat Maker] 4열 중앙 */
+.mode-beat-maker .bar { 
+    grid-template-columns: repeat(4, 1fr); 
+    max-width: 1200px; margin: 0 auto; 
+}
+
+/* [Beat Library] */
+.library-container { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1); width: 100%; }
+.lib-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 800px; margin: 0 auto; }
+.lib-img { 
+    width: 150px; height: auto; aspect-ratio: 5/3; /* 라이브러리도 5:3 */
+    border: 1px solid var(--border); border-radius: 8px; 
+    cursor: pointer; transition: all 0.2s; background: white; object-fit: contain; 
+}
+.lib-img:hover { transform: scale(1.05); border-color: var(--accent); }
+.lib-break { width: 100%; height: 0; }
+
+/* Rhythm Ear */
+.slot-img.correct { box-shadow: 0 0 0 4px var(--ok) !important; border-color: var(--ok); }
+.slot-img.wrong { box-shadow: 0 0 0 4px var(--warn) !important; border-color: var(--warn); }
+
+@media (min-width: 800px) and (orientation: landscape) {
+    .game-layout-wrapper { flex-direction: row; align-items: stretch; height: 90vh; max-width: 98vw; }
+    
+    .control-panel { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; max-height: 600px; margin: auto 0; }
+    .control-grid { flex-direction: column; align-items: stretch; gap: 24px; }
+    .nav-grp { flex-direction: column; }
+
+    .pattern-panel { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; height: 100%; overflow-y: auto; max-width: none !important; }
+    
+    /* 슬롯 컨테이너 확장 */
+    .slots-container { 
+        padding: 30px; 
+        max-width: 1600px; /* 최대 1600px까지 확장 */
+        margin: 0 auto; 
+        width: 100%; 
+        flex-grow: 1; 
+        justify-content: center; 
+    }
+}
+
+#count-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 120px; font-weight: 900; color: var(--accent); text-shadow: 0 4px 20px rgba(255,255,255,0.9); pointer-events: none; z-index: 100; opacity: 0; transition: opacity 0.2s; }
+.count-ani { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.0); } }
