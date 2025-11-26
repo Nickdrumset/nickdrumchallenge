@@ -174,27 +174,35 @@ footer { margin-top: 40px; font-size: 12px; color: var(--sub-text); opacity: 0.7
 }
 
 /* --- B. 모바일 세로 모드 최적화 (Mobile Portrait) --- */
-/* 조건: 너비가 좁고, 세로 모드일 때 */
 @media (max-width: 899px) and (orientation: portrait) {
     /* 1. 스크롤 잠금 해제 및 상단 여백 확보 */
     html, body { overflow-y: auto !important; }
+    
     #scaleWrap { 
         height: auto !important; 
         overflow: visible !important; 
         padding: 0 !important;
-        /* ui.js의 스케일링과 충돌 방지 */
+        transform: none !important; /* 모바일에서 강제 축소 방지 */
+        width: 100% !important;
     }
     
-    .game-layout-wrapper {
-        display: block !important; /* Flex 해제 -> 위에서 아래로 배치 */
-        padding-top: 80px !important; /* [핵심] 주소창/상단바 가림 방지 */
+    /* [핵심 수정] 상단 여백: 노치(safe-area) + 40px 추가 */
+    #menu-view, #game-view {
+        padding-top: calc(env(safe-area-inset-top) + 40px) !important;
         padding-bottom: 60px !important;
+        min-height: 100vh;
+    }
+
+    .game-layout-wrapper {
+        display: block !important; 
+        padding-top: 0 !important; /* 상위 뷰에서 여백을 줬으므로 여기는 제거 */
+        padding-bottom: 40px;
         height: auto !important;
     }
 
     /* 2. 패널 높이 제한 해제 */
     .pattern-panel {
-        min-height: auto !important; /* 750px 고정 높이 제거 */
+        min-height: auto !important;
         height: auto !important;
         overflow: visible !important;
     }
@@ -202,7 +210,7 @@ footer { margin-top: 40px; font-size: 12px; color: var(--sub-text); opacity: 0.7
     /* 3. 컨트롤 패널 위치 조정 */
     .control-panel {
         margin-bottom: 20px;
-        z-index: 50; /* 컨트롤이 타일 위에 오도록 */
+        z-index: 50; 
         position: relative;
     }
 }
