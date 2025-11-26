@@ -6,7 +6,6 @@
     <title>Nick Drum Challenge V3</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -67,7 +66,60 @@
                         </div>
                     </section>
 
-                </div>
+                    <div style="margin-top: 30px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px;">
+                        <div id="mic-control-box" style="text-align: center;">
+    
+                            <div id="mic-status-msg" style="font-size: 14px; color: var(--sub-text); margin-bottom: 10px; font-weight: 600;">
+                                Connect mic to measure accuracy
+                            </div>
+                            
+                            <div style="display:flex; gap:5px; margin-bottom:15px;">
+                                <button id="btn-mic-connect" onclick="MicInput.init()" class="btn primary" style="flex:1;">
+                                    🎤 Connect Mic
+                                </button>
+                                <button id="btn-mic-disconnect" onclick="MicInput.disconnect()" class="btn warn" style="flex:1; display:none;">
+                                    🔌 Disconnect
+                                </button>
+                                <button id="btn-auto-sync" onclick="MicInput.autoCalibrate()" class="btn" style="flex:1;" disabled title="Place mic near speakers">
+                                    ⚡ Auto Sync
+                                </button>
+                            </div>
+
+                            <div style="background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
+                                
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                    <span style="font-size: 11px; font-weight: bold; color: var(--sub-text); width: 40px;">Sync</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustLatency(-10)">-10</button>
+                                    <span id="latency-display" style="width: 45px; font-weight: 800; color: var(--accent); text-align: center; font-size: 12px;">+40ms</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustLatency(10)">+10</button>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                    <span style="font-size: 11px; font-weight: bold; color: var(--sub-text); width: 40px;">Filter</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustFilter(-500)">Dull</button> 
+                                    <span id="filter-display" style="width: 45px; font-weight: 800; color: #3f51b5; text-align: center; font-size: 12px;">3000Hz</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustFilter(500)">Bright</button>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                    <span style="font-size: 11px; font-weight: bold; color: var(--sub-text); width: 40px;">Rel</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustRelease(-10)">Short</button>
+                                    <span id="release-display" style="width: 45px; font-weight: 800; color: #673ab7; text-align: center; font-size: 12px;">50ms</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustRelease(10)">Long</button>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                    <span style="font-size: 11px; font-weight: bold; color: var(--sub-text); width: 40px;">Sens</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustSensitivity(-0.01)">More</button>
+                                    <span id="sens-display" style="width: 45px; font-weight: 800; color: #ff5722; text-align: center; font-size: 12px;">0.05</span>
+                                    <button class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="MicInput.adjustSensitivity(0.01)">Less</button>
+                                </div>
+                            </div>
+                            
+                            <div id="mic-icon" style="width: 10px; height: 10px; background: var(--warn); border-radius: 50%; margin: 15px auto 0; opacity: 0.2; transition: opacity 0.05s;"></div>
+                        </div>
+                    </div>
+                    </div>
             </main>
             
             <footer>
@@ -75,9 +127,10 @@
             </footer>
         </div>
 
+
         <div id="game-view" class="hidden">
             <header class="game-header">
-                <button id="btn-back" class="icon-btn" aria-label="메뉴로 돌아가기">
+                <button id="btn-back" class="icon-btn" aria-label="Back to Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
@@ -88,9 +141,7 @@
             <div id="game-container"></div>
         </div>
 
-    </div>
-
-    <button id="fsBtn" class="fs-btn" aria-label="전체화면 전환 (F)">
+    </div> <button id="fsBtn" class="fs-btn" aria-label="Toggle Fullscreen">
         <svg class="icon enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10V4h6m10 10v6h-6M4 4l7 7m9 9l-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <svg class="icon exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4H4v6m10 10h6v-6M11 11L4 4m9 9l7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
@@ -98,6 +149,8 @@
     <script src="js/config.js"></script>
     <script src="js/audio.js"></script>
     <script src="js/ui.js"></script>
+
+    <script src="js/mic-input.js"></script>
 
     <script src="js/exercises/speedup.js"></script>
     <script src="js/exercises/accents.js"></script>
