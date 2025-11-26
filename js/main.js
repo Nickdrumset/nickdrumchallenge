@@ -1,12 +1,15 @@
 /**
  * Nick Drum Challenge V3 - Main Controller
- * (최종 수정: Rhythm Ear Training 예비박/Go 제거, 방향키 BPM 조절 금지)
+ * (Updated: Mic Input Logic with 100ms/300ms Judgment)
  */
 const Main = {
     state: {
         currentGameId: null, isPlaying: false, timerId: null,
         bpm: 80, targetBpm: 200, nextNoteTime: 0.0, isIntro: true, stepIndex: 0,
-        images: [], soundPattern: [], level: 1
+        images: [], soundPattern: [], level: 1,
+        
+        // 판정 시스템용 대기열
+        noteQueue: [] 
     },
     
     module: null,
@@ -24,13 +27,10 @@ const Main = {
             
             if (key === ' ' || e.code === 'Space') { e.preventDefault(); this.togglePlay(); return; }
             
-            // 모듈별 단축키 위임
             if (this.module && this.module.handleKey) {
                 this.module.handleKey(key);
             }
 
-            // [수정] 공통 BPM 조절 (Beat Exercise 및 Rhythm Ear Training 제외)
-            // Rhythm Ear Training은 마우스 클릭으로만 BPM 조절 (+-5, +-15)
             if (this.state.currentGameId !== 'beat4816' && this.state.currentGameId !== 'rhythmear') {
                 if (e.key === 'ArrowUp') { e.preventDefault(); this.state.currentGameId==='sightreading'?this.updateLevel(1):this.updateTargetBpm(5); }
                 if (e.key === 'ArrowDown') { e.preventDefault(); this.state.currentGameId==='sightreading'?this.updateLevel(-1):this.updateTargetBpm(-5); }
@@ -91,7 +91,7 @@ const Main = {
             this.state.level = 1;
             this.module.init(container);
         } else {
-            container.innerHTML = `<div class="card" style="text-align:center;padding:40px;"><h3>${config.title}</h3><p>준비 중</p></div>`;
+            container.innerHTML = `<div class="card" style="text-align:center;padding:40px;"><h3>${config.title}</h3><p>Coming Soon</p></div>`;
         }
     },
 
@@ -100,6 +100,9 @@ const Main = {
     startGame() {
         audio.init(); audio.resume();
         this.state.isPlaying = true;
+        
+        // 큐 초기화
+        this.state.noteQueue = [];
         
         const btnStart = document.getElementById('btnStart');
         if(btnStart) {
@@ -120,6 +123,9 @@ const Main = {
         this.state.isPlaying = false;
         if (this.state.timerId) { clearInterval(this.state.timerId); this.state.timerId = null; }
         
+        // 큐 비우기
+        this.state.noteQueue = [];
+
         const btnStart = document.getElementById('btnStart');
         if(btnStart) { 
             btnStart.innerText = "Start"; 
@@ -155,10 +161,24 @@ const Main = {
     },
 
     _playStep(time) {
-        // [추가] Rhythm Ear Training 모드 확인
+        // [판정 로직] 노트 발생 시 큐에 등록
+        if (!this.state.isIntro && this.state.isPlaying) {
+            const currentImg = this.state.images[this.state.stepIndex];
+            if (currentImg) {
+                this.state.noteQueue.push({
+                    targetTime: time,
+                    element: currentImg,
+                    processed: false
+                });
+                
+                // 메모리 관리: 2초 지난 노트 제거
+                const now = audio.currentTime;
+                this.state.noteQueue = this.state.noteQueue.filter(n => n.targetTime > now - 2.0);
+            }
+        }
+
         const isRhythmEar = (this.state.currentGameId === 'rhythmear');
 
-        // 1. Intro Logic (수정: RhythmEar가 아닐 때만 실행)
         if (this.state.isIntro && !isRhythmEar) {
             const is16th = this.state.currentGameId === 'beat4816';
             const introLen = is16th ? 16 : 4;
@@ -176,7 +196,6 @@ const Main = {
             return;
         }
 
-        // 2. Go! 표시 로직 (수정: RhythmEar가 아닐 때만 실행)
         if (this.state.stepIndex === 0 && !isRhythmEar) {
             const beatDur = 60.0 / this.state.bpm;
             setTimeout(() => { 
@@ -187,7 +206,6 @@ const Main = {
             }, (time - audio.currentTime)*1000);
         }
 
-        // 3. 모듈별 재생
         if (this.module.playNote) {
             const nextIdx = this.module.playNote(time, this.state.stepIndex);
             if (nextIdx !== undefined) this.state.stepIndex = nextIdx;
@@ -227,6 +245,68 @@ const Main = {
                 this.updateBpm(this.state.bpm + inc); 
                 this.state.isIntro = true; this.state.stepIndex = 0;
             }
+        }
+    },
+
+    // [마이크 모듈에서 호출]
+    onDrumHit(hitTime) {
+        if (!this.state.isPlaying || this.state.noteQueue.length === 0) return;
+
+        let closestNote = null;
+        let minDiff = Infinity;
+        
+        // 판정 범위: ±0.3초 (300ms) - 요청하신 넉넉한 기준
+        const HIT_WINDOW = 0.3; 
+
+        for (let note of this.state.noteQueue) {
+            if (note.processed) continue; 
+            
+            const diff = hitTime - note.targetTime; 
+            const absDiff = Math.abs(diff);
+            
+            if (absDiff < HIT_WINDOW && absDiff < minDiff) {
+                minDiff = absDiff;
+                closestNote = note;
+                closestNote.diffRaw = diff;
+            }
+        }
+
+        if (closestNote) {
+            closestNote.processed = true;
+            this._showHitFeedback(closestNote.element, closestNote.diffRaw * 1000);
+        }
+    },
+
+    _showHitFeedback(element, diffMs) {
+        if (!element) return;
+        
+        let text = "";
+        let styleClass = "";
+        const absMs = Math.abs(diffMs);
+
+        // 1. Good: ±100ms 이내 (넉넉함)
+        if (absMs <= 100) {
+            text = "Good!";
+            styleClass = "judge-perfect";
+        } 
+        // 2. Early / Late: 100ms ~ 300ms
+        else if (absMs <= 300) {
+            text = diffMs < 0 ? "Early" : "Late";
+            styleClass = diffMs < 0 ? "judge-early" : "judge-late";
+        }
+        // 3. 그 외 (사실상 HIT_WINDOW 밖이라 실행 안 됨)
+        else {
+            text = "Miss";
+            styleClass = "judge-bad";
+        }
+
+        const feedbackEl = document.createElement("div");
+        feedbackEl.className = `hit-feedback ${styleClass}`;
+        feedbackEl.innerText = text;
+
+        if (element.parentNode) {
+            element.parentNode.appendChild(feedbackEl);
+            setTimeout(() => feedbackEl.remove(), 600);
         }
     },
 
