@@ -97,6 +97,15 @@ const UI = {
     _setupFullscreen() {
         const btn = this.elements.fsBtn;
         if (!btn) return;
+
+        // [핵심 수정] 아이폰/아이패드(iOS) 감지
+        // iOS Safari는 전체화면 API를 지원하지 않으므로 버튼을 숨깁니다.
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (isIOS) {
+            btn.style.display = 'none';
+            return;
+        }
+
         btn.addEventListener('click', () => this._toggleFullscreenAction());
         
         // 아이콘 업데이트
@@ -107,7 +116,7 @@ const UI = {
         };
         document.addEventListener('fullscreenchange', update);
         document.addEventListener('webkitfullscreenchange', update);
-        update(); // 초기상태
+        update(); 
     },
 
     _toggleFullscreenAction() {
